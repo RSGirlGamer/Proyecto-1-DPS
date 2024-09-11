@@ -5,11 +5,11 @@ const Usuario = require('../models/usuarioModel');
 
 // Registrar un nuevo usuario
 const registerUsuario = (req, res) => {
-  const { nombre, email, password, rol } = req.body;
+  const { nombre, nombre_usuario, email, password, rol } = req.body;
   bcrypt.hash(password, 10, (err, hashedPassword) => {
     if (err) return res.status(500).json({ error: err });
     
-    const nuevoUsuario = { nombre, email, password: hashedPassword, rol };
+    const nuevoUsuario = { nombre, nombre_usuario, email, password: hashedPassword, rol };
     Usuario.create(nuevoUsuario, (err, resultado) => {
       if (err) return res.status(500).json({ error: err });
       res.status(201).json({ message: 'Usuario creado', id: resultado.insertId });
@@ -25,11 +25,11 @@ const loginUsuario = (req, res) => {
     if (!resultado.length) return res.status(401).json({ message: 'Usuario no encontrado' });
     
     const usuario = resultado[0];
-    bcrypt.compare(password, usuario.password, (err, isMatch) => {
+    bcrypt.compare(password, usuario.contrasena, (err, isMatch) => {
       if (err) return res.status(500).json({ error: err });
       if (!isMatch) return res.status(401).json({ message: 'Contraseña incorrecta' });
       
-      const token = jwt.sign({ id: usuario.id, rol: usuario.rol }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
+      const token = jwt.sign({ id: usuario.id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
       res.status(200).json({ token });
     });
   });
@@ -45,8 +45,16 @@ const getUsuario = (req, res) => {
   });
 };
 
+const getAllUsuarios = (req, res) => {
+  Usuario.getAll((err, resultados) => {
+    if (err) return res.status(500).json({ error: err });
+    res.status(200).json(resultados);
+  });
+};
+
 module.exports = {
   registerUsuario,
   loginUsuario,
-  getUsuario
+  getUsuario,
+  getAllUsuarios
 };
