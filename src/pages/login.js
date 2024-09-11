@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './login.module.css'; 
+import { Button, Form, Card} from "react-bootstrap";
+
+
 
 const Login = () => {
   const [email, setEmail] = useState('');
@@ -18,42 +20,45 @@ const Login = () => {
   };
 
   return (
-    <div className={styles.container}>
-    <div className={styles.loginContainer}>
-      <h2 className={styles.title}>Iniciar Sesión</h2>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.formGroup}>
-          <label htmlFor="email" className={styles.label}>Correo:</label>
-          <input
-            type="email"
-            id="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="password" className={styles.label}>Contraseña:</label>
-          <input
-            type="password"
-            id="password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className={styles.input}
-            required
-          />
-        </div>
-        <div className={styles.buttonGroup}>
-          <button type="submit" className={`${styles.button} ${styles.loginButton}`}>Iniciar Sesión</button>
-          <button type="button" className={`${styles.button} ${styles.registerButton}`} onClick={handleRegisterRedirect}>
-            Registrarse
-          </button>
-        </div>
-      </form>
-    </div>
-    </div>
-  );
+
+    
+    <div className="d-flex justify-content-center align-items-center vh-100">
+    <Card style={{  width: '400px', padding: '20px', boxShadow: '0 10px 8px rgba(0, 0, 0, 0.1)' }}>
+        <h2 className="text-center mb-4">Iniciar Sesión</h2>
+
+    <Form onSubmit={handleSubmit}>
+      <Form.Group id="correo"> 
+        <Form.Label htmlFor="email">Correo:</Form.Label>
+        <Form.Control
+          type="email"
+          id="email"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
+          required
+        />
+      </Form.Group>
+
+      <Form.Group id="contrasena">
+        <Form.Label htmlFor="password">Contraseña:</Form.Label>
+        <Form.Control
+          type="password"
+          id="password"
+          value={password}
+          onChange={(e) => setPassword(e.target.value)}
+          required
+        />
+      </Form.Group>
+
+      <Form.Group id='botones'>
+        <Button variant="primary" type="submit">Iniciar</Button>
+        <Button variant="secondary" type="button" onClick={handleRegisterRedirect} className="ms-2">
+          Registrarse
+        </Button>
+      </Form.Group>
+    </Form> 
+    </Card>
+  </div>
+);
 };
 
 export default Login;

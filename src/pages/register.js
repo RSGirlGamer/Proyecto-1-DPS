@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import styles from './login.module.css'; 
+import { Button, Form, Card} from "react-bootstrap";
 
 const Register = () => {
   const [email, setEmail] = useState('');
@@ -22,52 +22,53 @@ const Register = () => {
     navigate('/login'); 
   };
 
+
   return (
-    <div className={styles.container}>
-    <div className={styles.loginContainer}>
-      <h2 className={styles.title}>Registrarse</h2>
-      <form onSubmit={handleSubmit} className={styles.form}>
-        <div className={styles.formGroup}>
-          <label htmlFor="email" className={styles.label}>Correo:</label>
-          <input
+
+    <div className="d-flex justify-content-center align-items-center vh-100">
+    <Card style={{  width: '400px', padding: '20px', boxShadow: '0 10px 8px rgba(0, 0, 0, 0.1)' }}>
+    <h2 className="text-center mb-4">Registrarse</h2>
+
+      <Form onSubmit={handleSubmit}>
+        <Form.Group id="rcorreo">
+          <Form.Label htmlFor="email">Correo:</Form.Label>
+          <Form.Control
             type="email"
             id="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
-            className={styles.input}
             required
           />
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="password" className={styles.label}>Contraseña:</label>
-          <input
+        </Form.Group>
+
+        <Form.Group id = "rcontrasena">
+          <Form.Label htmlFor="password">Contraseña:</Form.Label>
+          <Form.Control
             type="password"
             id="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
-            className={styles.input}
             required
           />
-        </div>
-        <div className={styles.formGroup}>
-          <label htmlFor="confirmPassword" className={styles.label}>Confirmar Contraseña:</label>
-          <input
+        </Form.Group>
+
+        <Form.Group id = "confirmarcontrasena">
+          <Form.Label htmlFor="confirmPassword">Confirmar Contraseña:</Form.Label>
+          <Form.Control
             type="password"
             id="confirmPassword"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
-            className={styles.input}
             required
           />
-        </div>
-        <div className={styles.buttonGroup}>
-          <button type="submit" className={`${styles.button} ${styles.loginButton}`}>Registrarse</button>
-          <button type="button" className={`${styles.button} ${styles.registerButton}`} onClick={handleLoginRedirect}>
-            Volver a Iniciar Sesión
-          </button>
-        </div>
-      </form>
-    </div>
+        </Form.Group>
+
+        <Form.Group>
+          <Button type="submit">Registrarse</Button>
+          <Button variant="secondary" type="button" onClick={handleLoginRedirect}>Volver a Iniciar Sesión</Button>
+        </Form.Group>
+      </Form>
+      </Card>
     </div>
   );
 };
