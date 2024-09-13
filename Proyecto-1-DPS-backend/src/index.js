@@ -6,13 +6,13 @@ const tareasRoutes = require('./routes/tareasRoutes');
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const rolesRoutes = require('./routes/rolesRoutes');
 const permissionsRoutes = require('./routes/permissionsRoutes');
-const cors = require('cors'); // Asegúrate de importar cors
+const cors = require('cors'); // Instalacion e importacion de cors.
 dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
 
-// Configura cors para permitir solicitudes desde el frontend
+// Cofiguracion de cors. 
 app.use(cors({
   origin: 'http://localhost:3001', // URL del frontend
   methods: ['GET', 'POST', 'PUT', 'DELETE'],

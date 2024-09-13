@@ -1,3 +1,4 @@
+//Importacion de registerUser
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button, Form, Card } from 'react-bootstrap';
@@ -17,7 +18,7 @@ const Register = () => {
       alert("Las contraseñas no coinciden.");
       return;
     }
-
+    //No se ha puesto el apartado parar elegir ROL
     try {
       const userData = { nombre, nombre_usuario: nombreUsuario, email, password };
       const result = await registerUser(userData);
