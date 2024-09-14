@@ -20,13 +20,22 @@ const getTareaById = (req, res) => {
 
 // Crear una nueva tarea
 const createTarea = (req, res) => {
-  const { nombre, descripcion, estado, id_proyecto } = req.body;
-  const nuevaTarea = { nombre, descripcion, estado, id_proyecto };
-  Tarea.create(nuevaTarea, (err, resultado) => {
-    if (err) return res.status(500).json({ error: err });
-    res.status(201).json({ message: 'Tarea creada', id: resultado.insertId });
+  const { nombre, descripcion, estado, id_proyecto, asignado_a } = req.body;
+
+  // Verificar si el usuario asignado existe
+  Usuario.getById(asignado_a, (err, usuario) => {
+    if (err) return res.status(500).json({ error: 'Error en la búsqueda de usuario' });
+    if (!usuario.length) return res.status(400).json({ error: 'Usuario no encontrado' });
+
+    // Crear la tarea si todo es válido
+    const nuevaTarea = { nombre, descripcion, estado, id_proyecto, asignado_a };
+    Tarea.create(nuevaTarea, (err, resultado) => {
+      if (err) return res.status(500).json({ error: err });
+      res.status(201).json({ message: 'Tarea creada', id: resultado.insertId });
+    });
   });
 };
+
 
 // Actualizar una tarea existente
 const updateTarea = (req, res) => {

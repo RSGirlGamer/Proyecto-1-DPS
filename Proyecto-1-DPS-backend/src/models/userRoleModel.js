@@ -6,9 +6,9 @@ class UserRole {
   }
 
   static assignRole(userId, roleId, callback) {
-    db.query('INSERT INTO usuario_roles (usuario_id, rol_id) VALUES (?, ?)', [userId, roleId], callback);
+    db.query('INSERT INTO usuario_roles (usuario_id, rol_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE rol_id = ?', [userId, roleId, roleId], callback);
   }
-
+  
   static removeRole(userId, roleId, callback) {
     db.query('DELETE FROM usuario_roles WHERE usuario_id = ? AND rol_id = ?', [userId, roleId], callback);
   }
