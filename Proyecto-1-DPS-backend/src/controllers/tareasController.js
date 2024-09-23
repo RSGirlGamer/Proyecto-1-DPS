@@ -1,4 +1,5 @@
 const Tarea = require('../models/tareaModel');
+const Usuario = require('../models/usuarioModel') //faltaba importar usuario
 
 // Obtener todas las tareas
 const getAllTareas = (req, res) => {
@@ -20,7 +21,7 @@ const getTareaById = (req, res) => {
 
 // Crear una nueva tarea
 const createTarea = (req, res) => {
-  const { nombre, descripcion, estado, id_proyecto, asignado_a } = req.body;
+  const { titulo, descripcion, proyecto_id, asignado_a,prioridad } = req.body; //cambio de nombres de variables para que hagan match con la bd, agregue la prioridad
 
   // Verificar si el usuario asignado existe
   Usuario.getById(asignado_a, (err, usuario) => {
@@ -28,7 +29,7 @@ const createTarea = (req, res) => {
     if (!usuario.length) return res.status(400).json({ error: 'Usuario no encontrado' });
 
     // Crear la tarea si todo es válido
-    const nuevaTarea = { nombre, descripcion, estado, id_proyecto, asignado_a };
+    const nuevaTarea = { titulo, descripcion, proyecto_id, asignado_a,prioridad }; //removi estado de aca para que se cree como pendiente por default
     Tarea.create(nuevaTarea, (err, resultado) => {
       if (err) return res.status(500).json({ error: err });
       res.status(201).json({ message: 'Tarea creada', id: resultado.insertId });
@@ -40,8 +41,8 @@ const createTarea = (req, res) => {
 // Actualizar una tarea existente
 const updateTarea = (req, res) => {
   const { id } = req.params;
-  const { nombre, descripcion, estado, id_proyecto } = req.body;
-  const actualizacion = { nombre, descripcion, estado, id_proyecto };
+  const { titulo, descripcion, estado, prioridad, proyecto_id } = req.body;
+  const actualizacion = { titulo, descripcion, estado, prioridad, proyecto_id };
   Tarea.update(id, actualizacion, (err) => {
     if (err) return res.status(500).json({ error: err });
     res.status(200).json({ message: 'Tarea actualizada' });

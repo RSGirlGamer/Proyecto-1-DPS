@@ -32,12 +32,15 @@ const registerUsuario = (req, res) => {
 // Iniciar sesión
 const loginUsuario = (req, res) => {
   const { correo_electronico, contrasena } = req.body;
+  console.log(req.body)
 
   Usuario.getByEmail(correo_electronico, (err, resultado) => {
     if (err) return res.status(500).json({ error: err });
+    console.log(resultado);
     if (!resultado.length) return res.status(401).json({ message: 'Usuario no encontrado' });
 
     const usuario = resultado[0];
+    console.log(usuario.contrasena)
 
     // Comparar la contraseña
     bcrypt.compare(contrasena, usuario.contrasena, (err, isMatch) => {

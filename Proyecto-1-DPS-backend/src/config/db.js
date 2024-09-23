@@ -1,6 +1,7 @@
 const mysql = require('mysql2');
 require('dotenv').config();
 
+
 console.log('DB_USER:', process.env.DB_USER);
 
 const connection = mysql.createConnection({
