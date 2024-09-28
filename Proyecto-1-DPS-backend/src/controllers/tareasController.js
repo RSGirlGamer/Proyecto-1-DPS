@@ -9,6 +9,13 @@ const getAllTareas = (req, res) => {
   });
 };
 
+const getTasksByProject= (req,res)=>{
+  Tarea.getTasks((err,resultado)=>{
+    if(err) return res.status(500).json({error:err});
+    res.status(200).json(resultado);
+  })
+}
+
 // Obtener una tarea por ID
 const getTareaById = (req, res) => {
   const { id } = req.params;
@@ -18,6 +25,15 @@ const getTareaById = (req, res) => {
     res.status(200).json(resultado[0]);
   });
 };
+
+const getTaskByProjectId =(req, res)=>{
+  const { id }= req.params;
+  Tarea.getTasksByProjectId(id, (err,resultado)=>{
+    if(err) return res.status(500).json({error:err});
+    if(!resultado.length) return res.status(400).json({message:'Tarea no encontrada'});
+    res.status(200).json(resultado);
+  })
+}
 
 // Crear una nueva tarea
 const createTarea = (req, res) => {
@@ -63,5 +79,7 @@ module.exports = {
   getTareaById,
   createTarea,
   updateTarea,
-  deleteTarea
+  deleteTarea,
+  getTasksByProject,
+  getTaskByProjectId
 };
