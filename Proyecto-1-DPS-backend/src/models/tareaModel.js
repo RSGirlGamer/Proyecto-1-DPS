@@ -15,6 +15,12 @@ const Tarea = {
   },
   delete: (id, callback) => {
     db.query('DELETE FROM tareas WHERE id = ?', [id], callback);
+  },
+  getTasks:(callback)=>{
+    db.query('SELECT * FROM taskByProject',callback);
+  },
+  getTasksByProjectId:(id,callback)=>{
+    db.query('SELECT * FROM taskByProject WHERE id = ?',[id],callback);
   }
 };
 
