@@ -2,10 +2,10 @@ const db = require('../config/db');
 
 const Usuario = {
   getAll: (callback) => {
-    db.query('SELECT * FROM usuarios', callback);
+    db.query('SELECT * FROM allUsersInclRole', callback);
   },
   getById: (id, callback) => {
-    db.query('SELECT * FROM usuarios WHERE id = ?', [id], callback);
+    db.query('SELECT * FROM allUsersInclRole WHERE id = ?', [id], callback);
   },
   getByEmail: (email, callback) => {
     db.query('SELECT * FROM usuarios WHERE correo_electronico = ?', [email], callback);
