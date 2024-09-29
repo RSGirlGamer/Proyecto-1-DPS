@@ -32,7 +32,7 @@
 $glaucous: #517ed6;
 $dark-spring-green: #457754;
 $rust: #a85427;
-$turquoise: #75dbc2ff;
+$turquoise: #75dbc2;
 $purpureus: #9653ab;
 
 $theme-colors: (
@@ -52,6 +52,11 @@ $theme-colors: (
         --bs-pagination-focus-color: #{$color-value} !important;
         --bs-pagination-active-bg: #{$color-value} !important;
         --bs-pagination-active-border-color: #{$color-value} !important;
+    }
+    .btn-#{$color-name} {
+        --bs-btn-color: #fff !important;
+        --bs-btn-hover-color:#fff !important;
+        --bs-btn-active-color: #fff !important;
     }
 }
 

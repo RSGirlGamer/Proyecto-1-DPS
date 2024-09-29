@@ -6,7 +6,7 @@ function NavbarCustom() {
             <Container>
                 <Nav>
                     <Nav.Link href="/proyects">Proyectos</Nav.Link>
-                    <Nav.Link href="#features">Usuarios</Nav.Link>
+                    <Nav.Link href="/users">Usuarios</Nav.Link>
                 </Nav>
                 <Button variant="glaucous">
                     <i className="bi bi-box-arrow-right"></i>
