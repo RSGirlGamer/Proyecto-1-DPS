@@ -69,6 +69,13 @@ const getAllUsuarios = (req, res) => {
   });
 };
 
+const getTasksByUser = (req, res) => {
+  Usuario.getTasksByUser((err, resultados) => {
+    if (err) return res.status(500).json({ error: err });
+    res.status(200).json(resultados);
+  });
+};
+
 // Obtener un usuario por ID
 const getUsuarioById = (req, res) => {
   const { id } = req.params;
@@ -143,5 +150,6 @@ module.exports = {
   updateUsuario,
   updatePassword,
   updateUsuarioRole,
-  deleteUsuario
+  deleteUsuario,
+  getTasksByUser
 };

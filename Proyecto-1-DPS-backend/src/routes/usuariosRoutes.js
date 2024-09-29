@@ -33,11 +33,13 @@ const { checkPermission } = require('../middleware/permissionsMiddleware');
  */
 router.post('/registrar', authenticateToken, checkPermission('puede_crear_usuarios'), usuariosController.registerUsuario);
 router.post('/login', usuariosController.loginUsuario);
+router.get('/tasksList', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getTasksByUser);
 router.get('/', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getAllUsuarios);
 router.get('/:id', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getUsuarioById);
 router.put('/password/:id', authenticateToken, checkPermission('puede_editar_usuarios'), usuariosController.updatePassword);
 router.delete('/:id', authenticateToken, checkPermission('puede_eliminar_usuarios'), usuariosController.deleteUsuario);
 router.put('/update',authenticateToken,checkPermission('puede_editar_usuarios'), usuariosController.updateUsuarioRole);
 router.put('/user', authenticateToken, checkPermission('puede_editar_usuarios'), usuariosController.updateUsuario);
+
 
 module.exports = router;

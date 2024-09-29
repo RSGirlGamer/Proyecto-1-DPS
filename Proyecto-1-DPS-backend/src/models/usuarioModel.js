@@ -7,6 +7,9 @@ const Usuario = {
   getById: (id, callback) => {
     db.query('SELECT * FROM allUsersInclRole WHERE id = ?', [id], callback);
   },
+  getTasksByUser: (callback) => {
+    db.query('SELECT * FROM tasksByUser', callback);
+  },
   getByEmail: (email, callback) => {
     db.query('SELECT * FROM usuarios WHERE correo_electronico = ?', [email], callback);
   },
