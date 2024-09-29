@@ -13,7 +13,7 @@ class UserRole {
     db.query('DELETE FROM usuario_roles WHERE usuario_id = ? AND rol_id = ?', [userId, roleId], callback);
   }
   static changeRole(userId,roleId, callback){
-    db.query('UPDATE  usuario_roles SET rol_id = ? WHERE usuario_id = ?', [roleId,userId,userId]);
+    db.query('UPDATE usuario_roles SET rol_id = ? WHERE usuario_id = ?', [roleId,userId], callback);
   }
 }
 
