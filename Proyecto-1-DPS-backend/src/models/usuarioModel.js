@@ -16,8 +16,8 @@ const Usuario = {
     db.query('INSERT INTO usuarios (nombre_usuario, nombre_completo, contrasena, correo_electronico) VALUES(?,?,?,?)', 
       [nombre_usuario, nombre, contrasena, correo_electronico], callback);
   },
-  update: (id, actualizacion, callback) => {
-    db.query('UPDATE usuarios SET ? WHERE id = ?', [actualizacion, id], callback);
+  update: (id, nombre_completo,nombre_usuario,correo_electronico, callback) => {
+    db.query('UPDATE usuarios SET  nombre_completo = ?, nombre_usuario = ?, correo_electronico = ? WHERE id = ?', [nombre_completo,nombre_usuario,correo_electronico, id], callback);
   },
   delete: (id, callback) => {
     db.query('DELETE FROM usuarios WHERE id = ?', [id], callback);

@@ -80,10 +80,10 @@ const getUsuarioById = (req, res) => {
 };
 
 // Modificar los datos de un usuario (excepto la contraseña)
-const updateUsuario = (req, res) => {
-  const { id } = req.params;
-  const actualizacion = req.body;
-  Usuario.update(id, actualizacion, (err) => {
+const updateUsuario = (req, res) => { //Actualizado para que envie parametro por parametro, no el json completo para que el id se obtenga desde la req
+  /* const { id } = req.params; */
+  const {id,nombre_completo,nombre_usuario,correo_electronico} = req.body;
+  Usuario.update(id, nombre_completo,nombre_usuario,correo_electronico, (err) => {
     if (err) return res.status(500).json({ error: err });
     res.status(200).json({ message: 'Usuario actualizado' });
   });
@@ -106,10 +106,12 @@ const updatePassword = (req, res) => {
 
 // Modificar el rol de un usuario
 const updateUsuarioRole = (req, res) => {
-  const { id } = req.params;
-  const { rol_id } = req.body;
-
-  UserRole.assignRole(id, rol_id, (err) => {
+/*   const { id } = req.params; */
+  const { usuario_id ,rol_id } = req.body;
+  console.log("si se ejecuta acá")
+  console.log("usuario_id",usuario_id);
+  console.log("rol_id",rol_id);
+  UserRole.changeRole(usuario_id, rol_id, (err) => {
     if (err) return res.status(500).json({ error: 'Error al asignar el rol' });
     res.status(200).json({ message: 'Rol actualizado' });
   });
