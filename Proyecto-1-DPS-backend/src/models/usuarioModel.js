@@ -10,6 +10,9 @@ const Usuario = {
   getTasksByUser: (callback) => {
     db.query('SELECT * FROM tasksByUser', callback);
   },
+  getTasksByUserById: (id, callback) => {
+    db.query('SELECT * FROM tasksByUser WHERE id = ?', [id], callback);
+  },
   getByEmail: (email, callback) => {
     db.query('SELECT * FROM usuarios WHERE correo_electronico = ?', [email], callback);
   },

@@ -76,7 +76,7 @@ const getAllUsuarios = (req, res) => {
     res.status(200).json(resultados);
   });
 };
-
+//Obtener tareas por usuario
 const getTasksByUser = (req, res) => {
   Usuario.getTasksByUser((err, resultados) => {
     if (err) return res.status(500).json({ error: err });
@@ -91,6 +91,14 @@ const getUsuarioById = (req, res) => {
     if (err) return res.status(500).json({ error: err });
     if (!resultado.length) return res.status(404).json({ message: 'Usuario no encontrado' });
     res.status(200).json(resultado[0]);
+  });
+};
+const getTasksByUserById = (req, res) => {
+  const { id } = req.params;
+  Usuario.getTasksByUserById(id, (err, resultado) => {
+    if (err) return res.status(500).json({ error: err });
+    if (!resultado.length) return res.status(404).json({ message: 'Usuario no encontrado' });
+    res.status(200).json(resultado);
   });
 };
 
@@ -159,5 +167,6 @@ module.exports = {
   updatePassword,
   updateUsuarioRole,
   deleteUsuario,
-  getTasksByUser
+  getTasksByUser,
+  getTasksByUserById
 };

@@ -34,6 +34,7 @@ const { checkPermission } = require('../middleware/permissionsMiddleware');
 router.post('/registrar', authenticateToken, checkPermission('puede_crear_usuarios'), usuariosController.registerUsuario);
 router.post('/login', usuariosController.loginUsuario);
 router.get('/tasksList', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getTasksByUser);
+router.get('/tasksList/:id', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getTasksByUserById);
 router.get('/', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getAllUsuarios);
 router.get('/:id', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getUsuarioById);
 router.put('/password/:id', authenticateToken, checkPermission('puede_editar_usuarios'), usuariosController.updatePassword);
