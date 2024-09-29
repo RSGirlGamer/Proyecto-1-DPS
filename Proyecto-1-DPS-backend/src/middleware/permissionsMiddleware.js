@@ -26,7 +26,6 @@ const checkPermission = (requiredPermission) => {
           if (permissions.length > 0) {
             const rolePermissions = permissions[0]; // Asumimos que obtenemos un único conjunto de permisos
 
-            console.log('Permisos obtenidos: ', rolePermissions);
 
             // Verifica si el permiso solicitado está habilitado (1) o deshabilitado (0)
             if (rolePermissions[requiredPermission] === 1) {

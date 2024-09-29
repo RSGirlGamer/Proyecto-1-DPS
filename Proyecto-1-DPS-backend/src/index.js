@@ -1,5 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
+const cors = require('cors');
 const dotenv = require('dotenv');
 const proyectosRoutes = require('./routes/proyectosRoutes');
 const tareasRoutes = require('./routes/tareasRoutes');
@@ -14,6 +15,11 @@ dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+app.use(cors({
+  origin: 'http://localhost:3001',
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization']
+}))
 app.use(bodyParser.json());
 app.use('/api/proyectos', proyectosRoutes);
 app.use('/api/tareas', tareasRoutes);

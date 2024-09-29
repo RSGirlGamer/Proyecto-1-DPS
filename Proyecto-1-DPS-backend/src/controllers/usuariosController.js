@@ -8,7 +8,6 @@ const UserRole = require('../models/userRoleModel');
 const registerUsuario = (req, res) => {
   const { nombre, nombre_usuario, correo_electronico, contrasena, rol_id } = req.body;
 
-  console.log('request obtenido: ', req.body);
 
   // Hash de la contraseña
   bcrypt.hash(contrasena, 10, (err, hashedPassword) => {
@@ -40,15 +39,12 @@ const registerUsuario = (req, res) => {
 // Iniciar sesión
 const loginUsuario = (req, res) => {
   const { correo_electronico, contrasena } = req.body;
-  console.log(req.body)
 
   Usuario.getByEmail(correo_electronico, (err, resultado) => {
     if (err) return res.status(500).json({ error: err });
-    console.log(resultado);
     if (!resultado.length) return res.status(401).json({ message: 'Usuario no encontrado' });
 
     const usuario = resultado[0];
-    console.log(usuario.contrasena)
 
     // Comparar la contraseña
     bcrypt.compare(contrasena, usuario.contrasena, (err, isMatch) => {
@@ -131,9 +127,6 @@ const updatePassword = (req, res) => {
 const updateUsuarioRole = (req, res) => {
 /*   const { id } = req.params; */
   const { usuario_id ,rol_id } = req.body;
-  console.log("si se ejecuta acá")
-  console.log("usuario_id",usuario_id);
-  console.log("rol_id",rol_id);
   UserRole.changeRole(usuario_id, rol_id, (err) => {
     if (err) return res.status(500).json({ error: 'Error al asignar el rol' });
     res.status(200).json({ message: 'Rol actualizado' });
@@ -143,18 +136,24 @@ const updateUsuarioRole = (req, res) => {
 // Eliminar un usuario
 const deleteUsuario = (req, res) => {
   const { id } = req.params;
+  
+  UserRole.getByUserId(id, (err, response) => {
+    if (err) return res.status(500).json({ error: 'Error al encontrar el rol del usuario' });
+    const id_rol = response[0].rol_id;
+    // Primero eliminamos el rol del usuario en la tabla usuario_roles
+    UserRole.removeRole(id, id_rol, (err) => {
+      if (err) return res.status(500).json({ error: 'Error al eliminar el rol del usuario' });
 
-  // Primero eliminamos el rol del usuario en la tabla usuario_roles
-  UserRole.removeRole(id, (err) => {
-    if (err) return res.status(500).json({ error: 'Error al eliminar el rol del usuario' });
+      // Luego eliminamos al usuario en la tabla usuarios
+      Usuario.delete(id, (err) => {
+        if (err) return res.status(500).json({ error: 'Error al eliminar el usuario' });
 
-    // Luego eliminamos al usuario en la tabla usuarios
-    Usuario.delete(id, (err) => {
-      if (err) return res.status(500).json({ error: 'Error al eliminar el usuario' });
-
-      res.status(200).json({ message: 'Usuario y roles eliminados exitosamente' });
+        res.status(200).json({ message: 'Usuario y roles eliminados exitosamente' });
+      });
     });
-  });
+  })
+
+
 };
 
 
