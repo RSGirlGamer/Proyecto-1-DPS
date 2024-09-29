@@ -8,15 +8,23 @@ const UserRole = require('../models/userRoleModel');
 const registerUsuario = (req, res) => {
   const { nombre, nombre_usuario, correo_electronico, contrasena, rol_id } = req.body;
 
+  console.log('request obtenido: ', req.body);
+
   // Hash de la contraseña
   bcrypt.hash(contrasena, 10, (err, hashedPassword) => {
-    if (err) return res.status(500).json({ error: err });
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ error: err });
+    }
 
     const nuevoUsuario = { nombre, nombre_usuario, correo_electronico, contrasena: hashedPassword };
 
     // Crear el usuario
     Usuario.create(nuevoUsuario, (err, resultado) => {
-      if (err) return res.status(500).json({ error: err });
+      if (err) {
+        console.error(err);
+        return res.status(500).json({ error: err });
+      }
 
       const usuarioId = resultado.insertId;
 
