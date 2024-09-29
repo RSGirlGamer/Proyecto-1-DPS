@@ -35,9 +35,9 @@ router.post('/registrar', authenticateToken, checkPermission('puede_crear_usuari
 router.post('/login', usuariosController.loginUsuario);
 router.get('/', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getAllUsuarios);
 router.get('/:id', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getUsuarioById);
-router.put('/:id', authenticateToken, checkPermission('puede_editar_usuarios'), usuariosController.updateUsuario);
-router.put('/role/:id', authenticateToken, checkPermission('puede_editar_usuarios'), usuariosController.updateUsuarioRole);
 router.put('/password/:id', authenticateToken, checkPermission('puede_editar_usuarios'), usuariosController.updatePassword);
 router.delete('/:id', authenticateToken, checkPermission('puede_eliminar_usuarios'), usuariosController.deleteUsuario);
+router.put('/update',authenticateToken,checkPermission('puede_editar_usuarios'), usuariosController.updateUsuarioRole);
+router.put('/user', authenticateToken, checkPermission('puede_editar_usuarios'), usuariosController.updateUsuario);
 
 module.exports = router;
