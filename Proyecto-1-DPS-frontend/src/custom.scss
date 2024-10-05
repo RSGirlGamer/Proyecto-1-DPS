@@ -1,0 +1,91 @@
+:root, [data-bs-theme="custom"] {
+    /* Theme Colors */
+    --bs-glaucous: #517ed6;
+    --bs-glaucous-rgb: 81, 126, 214;
+    --bs-glaucous-text-emphasis: rgb(14, 90, 240);
+    --bs-glaucous-bg-subtle: rgb(133, 182, 255);
+    --bs-glaucous-border-subtle: rgb(133, 182, 255);
+    --bs-dark-spring-green: #457754;
+    --bs-dark-spring-green-rgb: 69, 119, 84;
+    --bs-dark-spring-green-text-emphasis: #15e353;
+    --bs-dark-spring-green-bg-subtle: #3a5c43;
+    --bs-dark-spring-green-border-subtle: #3a5c43;
+    --bs-rust: #a85427;
+    --bs-rust-rgb: 168, 84, 39;
+    --bs-rust-text-emphasis: #eb5504;
+    --bs-rust-bg-subtle: #a06342;
+    --bs-rust-subtle: #a06342;
+    --bs-turquoise: #75dbc2;
+    --bs-turquoise-rgb: 117, 219, 194;
+    --bs-turquoise-text-emphasis: #1ce8b5;
+    --bs-turquoise-bg-subtle: #75ab9d;
+    --bs-turquoise-subtle: #75ab9d;
+    --bs-purpureus: #9653ab;
+    --bs-purpureus-rgb: 150, 83, 171;
+    --bs-purpureus-text-emphasis: #ab16d8;
+    --bs-purpureus-bg-subtle: #724a7e;
+    --bs-purpureus-subtle: #724a7e;
+    
+}
+
+/* Colores del Tema */
+$glaucous: #517ed6;
+$dark-spring-green: #457754;
+$rust: #a85427;
+$turquoise: #75dbc2;
+$purpureus: #9653ab;
+
+$theme-colors: (
+    "glaucous": $glaucous,
+    "dark-spring-green": $dark-spring-green,
+    "rust": $rust,
+    "turquoise": $turquoise,
+    "purpureus": $purpureus,
+);
+
+/* Color de Pagination */
+@each $color-name, $color-value in $theme-colors {
+    .pagination-#{$color-name} {
+        --bs-pagination-color: #{$color-value} !important;
+        --bs-pagination-border-color: #{$color-value} !important;
+        --bs-pagination-hover-color: #{$color-value} !important;
+        --bs-pagination-focus-color: #{$color-value} !important;
+        --bs-pagination-active-bg: #{$color-value} !important;
+        --bs-pagination-active-border-color: #{$color-value} !important;
+    }
+    .btn-#{$color-name} {
+        --bs-btn-color: #fff !important;
+        --bs-btn-hover-color:#fff !important;
+        --bs-btn-active-color: #fff !important;
+    }
+    .card .text-bg-#{$color-name} {
+        color: #fff !important;
+    }
+}
+
+.react-datepicker__header {
+    background-color: white;
+}
+
+.react-datepicker__day-names {
+    font-weight: bold;
+    background-color: $glaucous;
+}
+
+.react-datepicker__day-name {
+    color: white
+}
+
+.react-datepicker__day--selected {
+    background-color: $glaucous;
+}
+
+.react-datepicker-wrapper {
+    display: block;
+}
+
+
+
+
+
+@import '~bootstrap/scss/bootstrap.scss'
