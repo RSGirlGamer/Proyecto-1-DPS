@@ -31,7 +31,7 @@ const { checkPermission } = require('../middleware/permissionsMiddleware');
  *       500:
  *         description: Error en la creación
  */
-router.post('/registrar', authenticateToken, checkPermission('puede_crear_usuarios'), usuariosController.registerUsuario);
+router.post('/registrar', usuariosController.registerUsuario);
 router.post('/login', usuariosController.loginUsuario);
 router.get('/tasksList', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getTasksByUser);
 router.get('/tasksList/:id', authenticateToken, checkPermission('puede_ver_usuarios'), usuariosController.getTasksByUserById);

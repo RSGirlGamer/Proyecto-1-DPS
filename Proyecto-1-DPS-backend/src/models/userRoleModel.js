@@ -5,6 +5,10 @@ class UserRole {
     db.query('SELECT * FROM usuario_roles WHERE usuario_id = ?', [userId], callback);
   }
 
+  static getUserRolePermission(userId, callback) {
+    db.query("SELECT * FROM authentication_roles WHERE usuario_id = ?", [userId], callback)
+  }
+
   static assignRole(userId, roleId, callback) {
     db.query('INSERT INTO usuario_roles (usuario_id, rol_id) VALUES (?, ?) ON DUPLICATE KEY UPDATE rol_id = ?', [userId, roleId, roleId], callback);
   }

@@ -1,6 +1,6 @@
 import Select from 'react-select'
 
-function SelectCustom({options, value, onChange}) {
+function SelectCustom({options, value, onChange, required}) {
     return(
         <Select styles={{
             option: (baseStyles, state) => ({
@@ -18,7 +18,7 @@ function SelectCustom({options, value, onChange}) {
                 outline: state.isFocused ? "0" : "0",
                 boxShadow: state.isFocused ? "0 0 0px 0.25rem rgba(13, 110, 253, 0.25)" : ""
             })
-        }} options={options} value={value || {value: '', label: ''}} onChange={onChange} />
+        }} required={required} options={options} value={value || {value: '', label: ''}} onChange={onChange} />
     )
 }
 

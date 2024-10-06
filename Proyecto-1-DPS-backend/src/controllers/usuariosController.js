@@ -59,6 +59,10 @@ const loginUsuario = (req, res) => {
         // Incluir el rol en el token JWT
         const token = jwt.sign({ id: usuario.id, rol_id: rol_id }, JWT_SECRET, { expiresIn: JWT_EXPIRES_IN });
 
+        Usuario.updateLogin(usuario.id, new Date(), (err) => {
+          if (err) return res.status(500).json({ error: err });
+        });
+
         res.status(200).json({ token });
       });
     });
@@ -113,8 +117,10 @@ const updatePassword = (req, res) => {
   const { id } = req.params;
   const { contrasena } = req.body;
 
+
   bcrypt.hash(contrasena, 10, (err, hashedPassword) => {
     if (err) return res.status(500).json({ error: err });
+
 
     Usuario.updatePassword(id, hashedPassword, (err) => {
       if (err) return res.status(500).json({ error: err });

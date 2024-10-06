@@ -22,11 +22,17 @@ const Usuario = {
       [nombre_usuario, nombre, contrasena, correo_electronico], callback);
   },
   update: (id, nombre_completo,nombre_usuario,correo_electronico, callback) => {
-    db.query('UPDATE usuarios SET  nombre_completo = ?, nombre_usuario = ?, correo_electronico = ? WHERE id = ?', [nombre_completo,nombre_usuario,correo_electronico, id], callback);
+    db.query('UPDATE usuarios SET nombre_completo = ?, nombre_usuario = ?, correo_electronico = ? WHERE id = ?', [nombre_completo,nombre_usuario,correo_electronico, id], callback);
+  },
+  updateLogin: (id, date, callback) => {
+    db.query('UPDATE usuarios SET ultimo_acceso = ? WHERE id = ?', [date, id], callback);
+  },
+  updatePassword: (id, contrasena, callback) => {
+    db.query('UPDATE usuarios SET contrasena = ? WHERE id = ?', [contrasena, id], callback);
   },
   delete: (id, callback) => {
     db.query('DELETE FROM usuarios WHERE id = ?', [id], callback);
-  }
+  },
 };
 
 module.exports = Usuario;

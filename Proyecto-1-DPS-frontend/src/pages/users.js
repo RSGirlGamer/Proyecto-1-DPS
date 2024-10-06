@@ -2,7 +2,7 @@ import { Badge, Button, Card, Col, Container, Form, FormGroup, InputGroup, Modal
 import NavbarCustom from "../components/navbar";
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "react-query";
-import { deleteUser, editUser, editUserRole, getRoles, getUsers } from "../services/api";
+import { deleteUser, editPassword, editUser, editUserRole, getRoles, getUsers } from "../services/api";
 import SelectCustom from "../components/select";
 import DatePickerCustom from "../components/datepicker";
 
@@ -77,10 +77,19 @@ function Users() {
         }
     })
 
+    const editPasswordMutation = useMutation(editPassword, {
+        onSuccess: () => {
+            editRoleUserMutation.mutate(user)
+        },
+        onError: (e) => {
+            setToast({type: 'danger', header: 'Error', show: true, message: e})
+        }
+    })
+
     const updateUser = () => {
         const userp = users.find(u => u.id === user.id)
         if(user.contrasena !== userp.contrasena) {
-
+            editPasswordMutation.mutate({id: user.id, contrasena: user.contrasena})
         } else if(userp.rol_id !== user.rol_id) {
             editRoleUserMutation.mutate(user)
         } else {

@@ -7,6 +7,8 @@ const tareasRoutes = require('./routes/tareasRoutes');
 const usuariosRoutes = require('./routes/usuariosRoutes');
 const rolesRoutes = require('./routes/rolesRoutes');
 const permissionsRoutes = require('./routes/permissionsRoutes');
+const commentsRoutes = require('./routes/commentRoutes');
+
 
 const setupSwagger = require('./config/swagger');
 
@@ -26,6 +28,7 @@ app.use('/api/tareas', tareasRoutes);
 app.use('/api/usuarios', usuariosRoutes);
 app.use('/api/roles', rolesRoutes);
 app.use('/api/permisos', permissionsRoutes);
+app.use('/api/comentarios', commentsRoutes)
 
 setupSwagger(app);
 

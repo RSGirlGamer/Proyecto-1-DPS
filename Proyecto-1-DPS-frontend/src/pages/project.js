@@ -1,28 +1,32 @@
 import { Badge, Button, Card, Col, Container, Form, FormGroup, InputGroup, Modal, Pagination, Row, Spinner, Table, Toast, ToastContainer } from "react-bootstrap";
 import NavbarCustom from "../components/navbar";
-import { addProjectMembers, addTask, deleteProjectMembers, deleteTasks, editProject, editTask, getMembersProject, getProject, getTasksProjects, getUsers } from "../services/api";
+import { addComments, addProjectMembers, addTask, deleteProjectMembers, deleteTasks, editProject, editTask, getComments, getMembersProject, getPermissionsAuth, getProject, getTasksProjects, getUsers } from "../services/api";
 import { useMutation, useQuery, useQueryClient } from "react-query";
 import { useState } from "react";
 import DatePickerCustom from "../components/datepicker";
 import SelectCustom from "../components/select";
+import { useNavigate, useParams } from "react-router-dom";
+import { useAuth } from "../services/auth_provider";
+import { jwtDecode } from "jwt-decode";
 
 function ProjectEdit() {
 
     const queryClient = useQueryClient()
-    const projectID = 2
+    const navigate = useNavigate()
+    const { projectID } = useParams()
     const itemsPerPage = 5;
 
-    const { data: initialProject, isLoading, isError, isSuccess } = useQuery(["projects", {id: projectID}], () => getProject(projectID))
-    const { data: members, isLoadingMembers, isErrorMembers, isSuccessMembers } = useQuery("members", () => getMembersProject(projectID))
-    const { data: users, isLoadingUser, isErrorUsers, isSuccessUsers } = useQuery('users', getUsers)
-    const { data: tasks, isLoadingTask, isErrorTasks, isSuccessTasks } = useQuery('tasks', () => getTasksProjects(projectID))
+    const { data: initialProject, isLoading, isSuccess } = useQuery(["projects", {id: projectID}], () => getProject(projectID))
+    const { data: members, isLoadingMembers, isSuccessMembers } = useQuery(["members", {id: projectID}], () => getMembersProject(projectID))
+    const { data: users, isLoadingUser, isSuccessUsers } = useQuery('users', getUsers)
+    const { data: tasks, isLoadingTask, isSuccessTasks } = useQuery(["tasks", {id: projectID}], () => getTasksProjects(projectID))
+    const { data: comments, isLoadingComments, isSuccessComments} = useQuery(["comments", {id: projectID}], () => getComments(projectID))
 
-
-    const [project, setProject] = useState({id: 2})
+    const [project, setProject] = useState({id: projectID})
     const [toast, setToast] = useState({show: false});
     const [member, setMember] = useState({})
     const [task, setTask] = useState({})
-    const [comment, setComment] = useState({})
+    const [comment, setComment] = useState('')
     const [usersFilter, setUsersFilter] = useState([])
     const [showMemberDialog, setShowMemberDialog] = useState(false);
     const [showDeleteMember, setShowDeleteMember] = useState(false);
@@ -30,12 +34,15 @@ function ProjectEdit() {
     const [showDeleteTask, setShowDeleteTask] = useState(false);
     const [currentPageMembers, setCurrentPageMembers] = useState(0);
     const [currentPageTasks, setCurrentPageTasks] = useState(0);
-    const [currentPageComments, setCurrentPageComments] = useState(0);
 
     
     const offsetMembers = currentPageMembers * itemsPerPage;
     const offsetTasks = currentPageTasks * itemsPerPage;
-    const offsetComments = currentPageComments * itemsPerPage;
+    const auth = useAuth();
+    const user = jwtDecode(auth?.token)
+    const {data: permission} = useQuery(["rolesAuth", {user_id: user.id}], () => getPermissionsAuth(user.id), {
+        enabled: user != null
+    })
 
     const editMutation = useMutation(editProject, {
         onSuccess: () => {
@@ -103,6 +110,18 @@ function ProjectEdit() {
         }
     })
 
+    const saveCommentsMutation = useMutation(addComments, {
+        onSuccess: () => {
+            queryClient.invalidateQueries("comments")
+            setComment('')
+            setToast({type: 'success', header: 'Agregado', show: true, message: 'Se ha agregado correctamente'})
+        },
+        onError: (e) => {
+            setToast({type: 'danger', header: 'Error', show: true, message: e})
+        }
+    })
+
+
     const closeDialogs = () => {
         setShowMemberDialog(false)
         setShowDeleteMember(false)
@@ -115,6 +134,11 @@ function ProjectEdit() {
     const showMember = () => {
         setUsersFilter(users?.filter(e => !members.find(r => r.user_id === e.id)))
         setShowMemberDialog(true)
+    }
+
+    const backToTable = () => {
+        queryClient.invalidateQueries("projects")
+        navigate('/projects')
     }
 
     const showTask = (task) => {
@@ -157,6 +181,10 @@ function ProjectEdit() {
         closeDialogs()
     }
 
+    const addComment = () => {
+        saveCommentsMutation.mutate({comment: comment, userId: user.id, projectID: projectID})
+    }
+
     const deleteTask = () => {
         deleteTaskMutation.mutate(task.id)
         closeDialogs()
@@ -176,13 +204,6 @@ function ProjectEdit() {
         setCurrentPageTasks(prev => prev - 1)
     }
 
-    const nextPageComments = () => {
-        setCurrentPageComments(prev => prev + 1)
-    }
-    const prevPageComments = () => {
-        setCurrentPageComments(prev => prev - 1)
-    }
-
     const itemPages = (list, currentPage, setCurrentPage) => {
         const paginator = []
         for(let i = 0; i < Math.ceil(list?.length / itemsPerPage); i++) {
@@ -195,7 +216,7 @@ function ProjectEdit() {
         return str?.charAt(0).toUpperCase() + str?.slice(1);
     }
 
-    if(isLoading || isLoadingUser || isLoadingMembers || isLoadingTask) {
+    if(isLoading || isLoadingUser || isLoadingMembers || isLoadingTask || isLoadingComments) {
         return (
             <Container style={{marginTop: "20%"}}>
                 <Row className="align-items-center">
@@ -208,34 +229,7 @@ function ProjectEdit() {
         )
     }
 
-
-
-    if(isError || isErrorMembers || isErrorTasks || isErrorUsers) {
-        return(
-            <>
-                <NavbarCustom/>
-                <Container fluid>
-                    <Row>
-                        <Col>
-                            <h1 className="py-3 text-black">Editar Proyecto</h1>
-                        </Col>
-                    </Row>
-                    <Row>
-                        <Col>
-                            <Card bg="white">
-                                <Card.Header className="text-bg-glaucous">General</Card.Header>
-                                <Card.Body className="bg-transparent">
-                                    
-                                </Card.Body>
-                            </Card>
-                        </Col>
-                    </Row>
-                </Container>
-            </>
-        )
-    }
-
-    if((isSuccess || isSuccessMembers || isSuccessUsers || isSuccessTasks)) {
+    if((isSuccess || isSuccessMembers || isSuccessUsers || isSuccessTasks || isSuccessComments)) {
         return(
             <> 
                 <NavbarCustom></NavbarCustom>
@@ -243,6 +237,9 @@ function ProjectEdit() {
                     <Row>
                         <Col>
                             <h1 className="py-3 text-black">Editar Proyecto</h1>
+                        </Col>
+                        <Col className="col-auto py-4">
+                            <Button variant="glaucous" onClick={backToTable}>Regresar</Button>
                         </Col>
                     </Row>
                     <Row>
@@ -254,7 +251,7 @@ function ProjectEdit() {
                                         <Col>
                                             <Form.Group className="mb-3" controlid="form.ControlNameProject">
                                                 <Form.Label>Nombre</Form.Label>
-                                                <Form.Control type="text" value={project?.nombre || initialProject?.nombre} onChange={e => setProject({...project, nombre: e.target.value})} placeholder="deborarivas" />
+                                                <Form.Control type="text" defaultValue={initialProject?.nombre} value={project?.nombre} onChange={e => setProject({...project, nombre: e.target.value})} placeholder="Tarea DWF" />
                                             </Form.Group>
                                         </Col>
                                         <Col>
@@ -284,18 +281,22 @@ function ProjectEdit() {
                                         <Col>
                                             <Form.Group className="mb-3" controlid="form.ControlFullName">
                                                 <Form.Label>Descripción</Form.Label>
-                                                <Form.Control as="textarea" type="text" value={project?.descripcion || initialProject?.descripcion} onChange={e => setProject({...project, descripcion: e.target.value})} placeholder="Débora Beatriz Rivas Sánchez" />
+                                                <Form.Control as="textarea" type="text" defaultValue={initialProject?.descripcion}  value={project?.descripcion} onChange={e => setProject({...project, descripcion: e.target.value})} placeholder="Crear BD en PostreSQL con las tablas principales" />
                                             </Form.Group>
                                         </Col>
                                     </Row>
-                                    <Row className="mt-5 justify-content-end">
-                                        <Col className="col-auto">
-                                            <Button onClick={() => setProject({})} active variant="secondary">Cancelar</Button>
-                                        </Col>
-                                        <Col className="col-auto">
-                                            <Button active onClick={() => editMutation.mutate(project)} variant="glaucous">Guardar</Button>
-                                        </Col>
-                                    </Row>
+                                    {permission?.puede_editar_proyectos === 1 ? (
+                                        <Row className="mt-5 justify-content-end">
+                                            <Col className="col-auto">
+                                                <Button onClick={() => setProject({nombre: initialProject?.nombre, descripcion: initialProject?.descripcion})} active variant="secondary">Cancelar</Button>
+                                            </Col>
+                                            <Col className="col-auto">
+                                                <Button active onClick={() => editMutation.mutate(project)} variant="glaucous">Guardar</Button>
+                                            </Col>
+                                        </Row>
+                                        
+                                    ) : <></>}
+                                    
                                 </Card.Body>
                             </Card>
                         </Col>
@@ -303,11 +304,13 @@ function ProjectEdit() {
                             <Card bg="white">
                                 <Card.Header className="text-bg-purpureus">Integrantes</Card.Header>
                                 <Card.Body className="bg-transparent">
-                                    <Row className="justify-content-end">
-                                        <Col className="col-auto mb-3">
-                                            <Button active onClick={showMember} variant="glaucous">Añadir</Button>
-                                        </Col>
-                                    </Row>
+                                    {permission?.puede_editar_proyectos === 1 ? (
+                                        <Row className="justify-content-end">
+                                            <Col className="col-auto mb-3">
+                                                <Button active onClick={showMember} variant="glaucous">Añadir</Button>
+                                            </Col>
+                                        </Row>
+                                    ) : <></>}
                                     <Row>
                                         <Col>
                                             <Table striped bordered hover>
@@ -330,15 +333,18 @@ function ProjectEdit() {
                                                                             <Badge bg={colors[e.rol_id - 1]}>{e.user_role}</Badge>
                                                                         </td>
                                                                         <td>
-                                                                            <Container>
-                                                                                <Row>
-                                                                                    <Col className="col-auto">
-                                                                                        <Button onClick={() => showMemberDeleteDialog(e)} active variant="danger">
-                                                                                            <i className="bi bi-trash"></i>
-                                                                                        </Button>
-                                                                                    </Col>
-                                                                                </Row>
-                                                                            </Container>
+                                                                            {permission?.puede_editar_proyectos === 1 ? (
+                                                                                <Container>
+                                                                                    <Row>
+                                                                                        <Col className="col-auto">
+                                                                                            <Button onClick={() => showMemberDeleteDialog(e)} active variant="danger">
+                                                                                                <i className="bi bi-trash"></i>
+                                                                                            </Button>
+                                                                                        </Col>
+                                                                                    </Row>
+                                                                                </Container>
+                                                                            ) : <></>}
+                                                                            
                                                                         </td>
                                                                     </tr>
                                                                 )
@@ -364,11 +370,13 @@ function ProjectEdit() {
                             <Card bg="white">
                                 <Card.Header className="text-bg-dark-spring-green">Tareas</Card.Header>
                                 <Card.Body className="bg-transparent">
-                                    <Row className="justify-content-end">
-                                        <Col className="col-auto mb-3">
-                                            <Button active onClick={() => showTask()} variant="glaucous">Añadir</Button>
-                                        </Col>
-                                    </Row>
+                                    {permission?.puede_agregar_tareas === 1 ? (
+                                        <Row className="justify-content-end">
+                                            <Col className="col-auto mb-3">
+                                                <Button active onClick={() => showTask()} variant="glaucous">Añadir</Button>
+                                            </Col>
+                                        </Row>
+                                    ) : <></>}
                                     <Row>
                                         <Col>
                                             <Table striped bordered hover>
@@ -411,18 +419,23 @@ function ProjectEdit() {
                                                                         {lastDate}
                                                                     </td>
                                                                     <td>
+                                                                    
                                                                         <Container>
                                                                             <Row>
-                                                                                <Col className="col-6">
-                                                                                    <Button onClick={() => showTask(e)} active variant="glaucous">
-                                                                                        <i className="bi bi-pencil"></i>
-                                                                                    </Button>
-                                                                                </Col>
-                                                                                <Col className="col-6">
-                                                                                    <Button onClick={() => showTaskDeleteDialog(e)} active variant="danger">
-                                                                                        <i className="bi bi-trash"></i>
-                                                                                    </Button>
-                                                                                </Col>
+                                                                                {permission?.puede_editar_tareas === 1 ? (
+                                                                                    <Col className="col-6">
+                                                                                        <Button onClick={() => showTask(e)} active variant="glaucous">
+                                                                                            <i className="bi bi-pencil"></i>
+                                                                                        </Button>
+                                                                                    </Col>
+                                                                                ) : <></>}
+                                                                                {permission?.puede_eliminar_tareas === 1 ? (
+                                                                                    <Col className="col-6">
+                                                                                        <Button onClick={() => showTaskDeleteDialog(e)} active variant="danger">
+                                                                                            <i className="bi bi-trash"></i>
+                                                                                        </Button>
+                                                                                    </Col>
+                                                                                ) : <></>}
                                                                             </Row>
                                                                         </Container>
                                                                     </td>
@@ -446,15 +459,29 @@ function ProjectEdit() {
                         <Col>
                             <Card bg="white">
                                 <Card.Header className="text-bg-turquoise">Comentarios</Card.Header>
-                                <Card.Body className="bg-transparent">
-                                    <h2 className="text-center">Has el primer comentario!</h2>
+                                <Card.Body className="bg-transparent overflow-auto" style={{height: '420px', transform: "translate(0, 0)"}}>
+                                    {comments ? comments.map((e, i) => (
+                                        <Card key={e.id} className={i > 0 ? "mt-3" : ""}>
+                                            <Card.Body>
+                                                <Card.Subtitle className="mb-2 text-muted">{users?.find(u => u.id === e.id_user).nombre_usuario}</Card.Subtitle>
+                                                <Card.Text>
+                                                    {e.comment}
+                                                </Card.Text>
+                                                <Card.Text className="text-end">
+                                                    <small className="text-muted">{new Intl.DateTimeFormat('en-US', {month: 'short',day: 'numeric', hour: '2-digit', minute: '2-digit'}).format(new Date(e.created_at))}</small>
+                                                </Card.Text>
+                                            </Card.Body>
+                                        </Card>
+                                    )) : <>
+                                        <h2 className="text-center">Has el primer comentario!</h2>
+                                    </>}
                                 </Card.Body>
                                 <Card.Footer>
                                     <Row>
                                         <Col>
                                             <InputGroup className="mb-3" controlid="form.ControlComment">
-                                                <Form.Control as="textarea" type="text" value={comment?.value} onChange={e => setComment({...comment, value: e.target.value})} placeholder="Añade un Comentario" />
-                                                <Button variant="glaucous" id="button-addon2">
+                                                <Form.Control as="textarea" type="text" value={comment} onChange={e => setComment(e.target.value)} placeholder="Añade un Comentario" />
+                                                <Button variant="glaucous" onClick={addComment}>
                                                     Enviar
                                                 </Button>
                                             </InputGroup>

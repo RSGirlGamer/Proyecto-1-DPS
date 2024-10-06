@@ -1,18 +1,32 @@
-import { Badge, Button, Card, Col, Container, Form, Modal, Pagination, ProgressBar, Row, Table, Toast, ToastContainer } from "react-bootstrap";
+import { Badge, Button, Card, Col, Container, Form, Modal, Pagination, Row, Spinner, Table, Toast, ToastContainer } from "react-bootstrap";
 import NavbarCustom from "../components/navbar";
 import { useState } from "react";
-import { useMutation, useQueryClient } from "react-query";
-import { addProject, deleteProject } from "../services/api";
+import { useMutation, useQuery, useQueryClient } from "react-query";
+import { addProject, deleteProject, getPermissionsAuth, getProjects } from "../services/api";
 import DatePickerCustom from "../components/datepicker";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../services/auth_provider";
+import { jwtDecode } from "jwt-decode";
 
 
 function Home() {
 
     const queryClient = useQueryClient()
+    const navigate = useNavigate();
     const [toast, setToast] = useState({show: false});
     const [showDelete, setShowDelete] = useState(false);
     const [show, setShow] = useState(false);
     const [project, setProject] = useState({});
+    const [currentPage, setCurrentPage] = useState(0);
+    const itemsPerPage = 5;
+    const offset = currentPage * itemsPerPage;
+
+    const auth = useAuth()
+    const user = jwtDecode(auth.token)
+
+    const {data: permission} = useQuery(["rolesAuth", {user_id: user.id}], () => getPermissionsAuth(user.id), {
+        enabled: user != null
+    })
 
     const handleShow = () => setShow(true);
 
@@ -22,9 +36,11 @@ function Home() {
         setProject({})
     }
 
+    const { data: projects, isLoading } = useQuery('projects', getProjects)
+
     const saveMutation = useMutation(addProject, {
         onSuccess: () => {
-            // queryClient.invalidateQueries("users")
+            queryClient.invalidateQueries("projects")
             setToast({type: 'success', header: 'Creado', show: true, message: 'Se ha creado correctamente'})
         },
         onError: (e) => {
@@ -34,7 +50,10 @@ function Home() {
 
     const deleteMutation = useMutation(deleteProject, {
         onSuccess: () => {
-            // queryClient.invalidateQueries("users")
+            queryClient.invalidateQueries("projects")
+            if(currentPage > 0 && projects.length > 5) {
+                setCurrentPage(0)
+            }
             setToast({type: 'success', header: 'Eliminado', show: true, message: 'Se ha eliminado correctamente'})
         },
         onError: (e) => {
@@ -47,9 +66,46 @@ function Home() {
         handleClose()
     }
 
+    const showProject = (e) => {
+        navigate('/projects/project/' + e.id)
+    }
+
+    const showDialogDelete = (e) => {
+        setProject(e)
+        setShowDelete(true)
+    }
+
     const removeProject = () => {
-        deleteMutation.mutate(project)
+        deleteMutation.mutate(project?.id)
         handleClose()
+    }
+
+    const nextPage = () => {
+        setCurrentPage(prev => prev + 1)
+    }
+    const prevPage = () => {
+        setCurrentPage(prev => prev - 1)
+    }
+
+    const itemPages = () => {
+        const paginator = []
+        for(let i = 0; i < Math.ceil(projects?.length / itemsPerPage); i++) {
+            paginator.push(<Pagination.Item key={i} onClick={() => setCurrentPage(i)} active={i === currentPage}>{i + 1}</Pagination.Item>)  
+        }
+        return paginator
+    }
+
+    if(isLoading) {
+        return (
+            <Container style={{marginTop: "20%"}}>
+                <Row className="align-items-center">
+                    <Col className="col-6"></Col>
+                    <Col className="align-self-center">
+                        <Spinner animation="border" variant="glaucous" />
+                    </Col>
+                </Row>
+            </Container>
+        )
     }
 
     return(
@@ -60,11 +116,15 @@ function Home() {
                     <Col>
                         <h1 className="py-3 text-black">Proyectos</h1>
                     </Col>
-                    <Col className="col-auto mb-1 align-self-end">
-                        <Button variant="glaucous" onClick={handleShow}>
-                            Agregar
-                        </Button>
-                    </Col>
+                    {permission?.puede_crear_proyectos === 1 ? (
+                        <>
+                            <Col className="col-auto mb-1 align-self-end">
+                                <Button variant="glaucous" onClick={handleShow}>
+                                    Agregar
+                                </Button>
+                            </Col>
+                        </>
+                    ) : <></>}    
                 </Row>
                 
                 <Card bg="white">
@@ -73,21 +133,70 @@ function Home() {
                             <thead>
                                 <tr>
                                     <th>Nombre de Proyecto</th>
-                                    <th>Miembros</th>
+                                    <th>Descripción</th>
                                     <th>Fecha de Finalización</th>
                                     <th>Status</th>
                                     <th></th>
                                 </tr>
                             </thead>
                             <tbody>
-                                
+                                {projects?.map((e, i) => {
+                                    if(i >= offset && i < offset + itemsPerPage) {
+                                        const colors = ["rust", "turquoise", "dark-spring-green", "purpureus", "glaucous"]
+                                        var status;
+                                        switch(e.estado) {
+                                            case 'Activo':
+                                                status = 4
+                                                break;
+                                            case 'Inactivo':
+                                                status = 0
+                                                break;
+                                            case 'Finalizado':
+                                                status = 1
+                                                break;
+                                            default:
+                                                console.log("No existe la prioridad");
+                                        }
+                                        return(
+                                            
+                                            <tr key={e.id}>
+                                                <td>{e.nombre}</td>
+                                                <td>{e.descripcion}</td>
+                                                <td>{new Intl.DateTimeFormat('en-US', {year: 'numeric', month: '2-digit',day: '2-digit'}).format(new Date(e.fecha_fin))}</td>
+                                                <td>
+                                                    <Badge bg={colors[status]}>{e.estado}</Badge>
+                                                </td>
+                                                <td>
+                                                    <Container>
+                                                        <Row>
+                                                            <Col className="col-auto">
+                                                                <Button onClick={() => showProject(e)} active variant="glaucous">
+                                                                    <i className="bi bi-pencil"></i>
+                                                                </Button>
+                                                            </Col>
+                                                            {permission?.puede_eliminar_proyectos === 1 ? (
+                                                                <>
+                                                                    <Col className="col-auto">
+                                                                        <Button onClick={() => showDialogDelete(e)} active variant="danger">
+                                                                            <i className="bi bi-trash"></i>
+                                                                        </Button>
+                                                                    </Col>
+                                                                </>
+                                                            ) : <></>}
+                                                        </Row>
+                                                    </Container>
+                                                </td>
+                                            </tr>
+                                        )
+                                    }    
+                                    return null;
+                                })}
                             </tbody>   
                         </Table>
                         <Pagination className="d-flex justify-content-center pagination-glaucous">
-                            <Pagination.Prev />
-                            <Pagination.Item active>{1}</Pagination.Item>
-                            <Pagination.Item>{2}</Pagination.Item>
-                            <Pagination.Next />
+                            <Pagination.Prev onClick={prevPage} disabled={currentPage === 0}/>
+                            {itemPages()}
+                            <Pagination.Next onClick={nextPage} disabled={currentPage + 1 === Math.ceil(projects?.length / itemsPerPage)}/>
                         </Pagination>
                     </Card.Body>
                 </Card>

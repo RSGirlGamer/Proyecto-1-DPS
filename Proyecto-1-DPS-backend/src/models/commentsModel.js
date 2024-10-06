@@ -1,8 +1,12 @@
 const db = require('../config/db');
 
 class Comments {
-  static create(userId, taskId, commentary, callback) {
-    db.query('INSERT INTO comentarios (id_user, id_task, comment) VALUES (?, ?, ?)', [userId, taskId, commentary], callback);
+  static get(projectID, callback) {
+    db.query('SELECT * FROM comentarios WHERE id_project = ?', [projectID], callback)
+  }
+
+  static create(comment, callback) {
+    db.query('INSERT INTO comentarios (id_user, id_project, comment) VALUES (?, ?, ?)', [comment.userId, comment.projectID, comment.comment], callback);
   }
 }
 

@@ -61,6 +61,10 @@ $theme-colors: (
     .card .text-bg-#{$color-name} {
         color: #fff !important;
     }
+    .checkbox-#{$color-name} .form-check-input:checked {
+        background-color: #{$color-value}; 
+        border-color: #{$color-value}; 
+      }
 }
 
 .react-datepicker__header {
