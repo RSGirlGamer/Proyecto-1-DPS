@@ -1,5 +1,6 @@
 const Role = require('../models/roleModel');
 
+// Maneja la solicitud para obtener todos los roles.
 const getAllRoles = (req, res) => {
   Role.getAll((err, results) => {
     if (err) return res.status(500).json({ error: err });
@@ -7,6 +8,7 @@ const getAllRoles = (req, res) => {
   });
 };
 
+// Maneja la solicitud para obtener un rol por su ID.
 const getRoleById = (req, res) => {
   const { id } = req.params;
   Role.getById(id, (err, result) => {
@@ -16,6 +18,7 @@ const getRoleById = (req, res) => {
   });
 };
 
+// Maneja la solicitud para crear un nuevo rol.
 const createRole = (req, res) => {
   const role = req.body;
   Role.create(role, (err, result) => {
@@ -24,6 +27,7 @@ const createRole = (req, res) => {
   });
 };
 
+// Maneja la solicitud para actualizar un rol existente.
 const updateRole = (req, res) => {
   const { id } = req.params;
   const role = req.body;
@@ -33,6 +37,7 @@ const updateRole = (req, res) => {
   });
 };
 
+// Maneja la solicitud para eliminar un rol por su ID.
 const deleteRole = (req, res) => {
   const { id } = req.params;
   Role.delete(id, (err, result) => {

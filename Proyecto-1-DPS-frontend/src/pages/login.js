@@ -1,61 +1,85 @@
-//Importacion de loginUser
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Button, Form, Card } from 'react-bootstrap';
-import { loginUser } from '../api/auth';
+import { Button, Form, Card, ToastContainer, Toast, Row, Col } from 'react-bootstrap';
+import { useAuth } from '../services/auth_provider';
+
 
 const Login = () => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const navigate = useNavigate();
+    // Estados paa almacenar el correo electronico y la contrasena
+    const [correo_electronico, setEmail] = useState('');
+    const [contrasena, setPassword] = useState('');
+    const [toast, setToast] = useState({show: false});
+    const auth = useAuth();
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    try {
-      const result = await loginUser({ email, password });
-      console.log('Inicio de sesión exitoso:', result);
-      localStorage.setItem('token', result.token); 
-      navigate('/dashboard'); 
-    } catch (error) {
-      console.error('Error en el inicio de sesión:', error.response ? error.response.data : error.message);
-      alert('Hubo un problema al iniciar sesión. Por favor, intente de nuevo.');
-    }
+    
+    // Maneja ña presentacion del formulario. 
+    const handleSubmit = async (e) => {
+    e.preventDefault()
+    // inica el proceso de inicio de sesion 
+    auth.initLogin({correo_electronico, contrasena})
   };
 
   return (
     <div className="d-flex justify-content-center align-items-center vh-100">
-      <Card style={{ width: '400px', padding: '20px', boxShadow: '0 10px 8px rgba(0, 0, 0, 0.1)' }}>
-        <h2 className="text-center mb-4">Iniciar Sesión</h2>
-
-        <Form onSubmit={handleSubmit}>
-          <Form.Group id="email">
-            <Form.Label htmlFor="email">Correo:</Form.Label>
-            <Form.Control
-              type="email" 
-              id="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </Form.Group>
-
-          <Form.Group id="password">
-            <Form.Label htmlFor="password">Contraseña:</Form.Label>
-            <Form.Control
-              type="password"
-              id="password"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </Form.Group>
-
-          <Form.Group>
-            <Button type="submit">Iniciar Sesión</Button>
-          </Form.Group>
-        </Form>
+      <Card style={{ width: '400px', boxShadow: '0 10px 8px rgba(0, 0, 0, 0.1)' }}>
+        <Card.Header className="text-bg-glaucous">
+            <h2 className="text-center">Iniciar Sesión</h2>
+        </Card.Header>
+        <Card.Body>
+            <Form onSubmit={handleSubmit}>
+                <Row>
+                    <Form.Group id="email">
+                        <Form.Label htmlFor="email">Correo:</Form.Label>
+                        <Form.Control
+                        type="email" 
+                        id="email"
+                        value={correo_electronico}
+                        onChange={(e) => setEmail(e.target.value)}
+                        required
+                        />
+                    </Form.Group>
+                </Row>
+                <Row className='mt-3'>
+                    <Form.Group id="password">
+                        <Form.Label htmlFor="password">Contraseña:</Form.Label>
+                        <Form.Control
+                        type="password"
+                        id="password"
+                        value={contrasena}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        />
+                    </Form.Group>
+                </Row>
+                <Row className='mt-3'>
+                    <Col className='col-auto'>
+                        <Form.Group>
+                            <Button variant='glaucous' type="submit">Iniciar Sesión</Button>
+                        </Form.Group>
+                    </Col>
+                    <Col>
+                        <Form.Group>
+                            <Button variant='rust' href='/register'>Registrar</Button>
+                        </Form.Group>
+                    </Col>
+                    
+                </Row>
+            </Form>
+        </Card.Body>
       </Card>
+      <ToastContainer
+            className="p-3"
+            position="top-center"
+            style={{ zIndex: 1 }}
+        >
+            <Toast onClose={() => setToast({...toast, show: false})} bg={toast?.type} show={toast.show} delay={5000} autohide>
+                <Toast.Header closeButton={false}>
+                    <strong className="me-auto">{toast.header}</strong>
+                </Toast.Header>
+                <Toast.Body className="text-center">{toast.message}</Toast.Body>
+            </Toast>
+        </ToastContainer>
     </div>
+    
   );
 };
 
