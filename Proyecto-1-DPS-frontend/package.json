@@ -9,12 +9,17 @@
     "axios": "^1.7.7",
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
+    "jwt-decode": "^4.0.0",
     "react": "^18.3.1",
     "react-bootstrap": "^2.10.4",
+    "react-datepicker": "^7.4.0",
     "react-dom": "^18.3.1",
-    "react-scripts": "5.0.1",
-    "sass": "^1.77.8",
-    "sass-loader": "^16.0.1",
+    "react-query": "^3.39.3",
+    "react-scripts": "^5.0.1",
+    "react-select": "^5.8.0",
+    "react-use": "^17.5.1",
+    "sass": "^1.78.0",
+    "sass-loader": "^16.0.2",
     "web-vitals": "^2.1.4"
   },
   "scripts": {
@@ -42,6 +47,6 @@
     ]
   },
   "devDependencies": {
-    "react-router-dom": "^6.26.1"
+    "react-router-dom": "^6.26.2"
   }
 }
