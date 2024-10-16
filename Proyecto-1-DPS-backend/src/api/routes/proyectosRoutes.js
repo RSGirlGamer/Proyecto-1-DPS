@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const proyectosController = require('../../controllers/proyectosController');
-const authenticateToken = require('../../middleware/authMiddleware');
+const proyectosController = require('../controllers/proyectosController');
+const authenticateToken = require('../middleware/authMiddleware');
 
 router.get('/', authenticateToken, proyectosController.getAllProyectos);
 router.get('/:id', authenticateToken, proyectosController.getProyectoById);

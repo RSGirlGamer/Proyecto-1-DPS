@@ -1,4 +1,4 @@
-const db = require('../config/db');
+const db = require('../api/config/db');
 
 const Tarea = {
   getAll: (callback) => {

@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const permissionsController = require('../../controllers/permissionsController');
+const permissionsController = require('../controllers/permissionsController');
 
 router.get('/:rol_id', permissionsController.getPermissionsByRoleId);
 router.post('/', permissionsController.createPermissions)

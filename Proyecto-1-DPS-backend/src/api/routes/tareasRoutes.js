@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const tareasController = require('../../controllers/tareasController');
-const authenticateToken = require('../../middleware/authMiddleware');
+const tareasController = require('../controllers/tareasController');
+const authenticateToken = require('../middleware/authMiddleware');
 
 router.get('/', authenticateToken, tareasController.getAllTareas);
 router.get('/project/', authenticateToken, tareasController.getTasksByProject);
