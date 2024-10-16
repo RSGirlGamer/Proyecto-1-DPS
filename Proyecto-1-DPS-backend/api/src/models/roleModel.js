@@ -1,4 +1,4 @@
-const db = require('../api/config/db');
+const db = require('../config/db');
 
 class Role {
   static getAll(callback) {

@@ -1,4 +1,5 @@
-const db = require('../api/config/db');
+const db = require('../config/db');
+
 
 class UserRole {
   static getByUserId(userId, callback) {
