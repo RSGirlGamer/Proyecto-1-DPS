@@ -2,15 +2,13 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const cors = require('cors');
 const dotenv = require('dotenv');
-const proyectosRoutes = require('./routes/proyectosRoutes');
-const tareasRoutes = require('./routes/tareasRoutes');
-const usuariosRoutes = require('./routes/usuariosRoutes');
-const rolesRoutes = require('./routes/rolesRoutes');
-const permissionsRoutes = require('./routes/permissionsRoutes');
-const commentsRoutes = require('./routes/commentRoutes');
-
-
-const setupSwagger = require('./config/swagger');
+const proyectosRoutes = require('../routes/proyectosRoutes');
+const tareasRoutes = require('../routes/tareasRoutes');
+const usuariosRoutes = require('../routes/usuariosRoutes');
+const rolesRoutes = require('../routes/rolesRoutes');
+const permissionsRoutes = require('../routes/permissionsRoutes');
+const commentsRoutes = require('../routes/commentRoutes');
+const setupSwagger = require('../config/swagger');
 
 dotenv.config();
 
