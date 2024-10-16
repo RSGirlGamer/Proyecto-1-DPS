@@ -1,6 +1,6 @@
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET, JWT_EXPIRES_IN } = require('../api/config/auth');
+const { JWT_SECRET, JWT_EXPIRES_IN } = require('../config/auth');
 const Usuario = require('../models/usuarioModel');
 const UserRole = require('../models/userRoleModel');
 
