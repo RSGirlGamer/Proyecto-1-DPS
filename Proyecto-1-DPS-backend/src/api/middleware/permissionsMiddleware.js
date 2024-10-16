@@ -1,5 +1,5 @@
 const jwt = require('jsonwebtoken');
-const { JWT_SECRET } = require('../config/auth');
+const { JWT_SECRET } = require('../api/config/auth');
 const UsuarioRol = require('../models/userRoleModel');
 const Permission = require('../models/permissionModel');
 
