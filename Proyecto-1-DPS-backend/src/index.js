@@ -8,8 +8,6 @@ const usuariosRoutes = require('./routes/usuariosRoutes');
 const rolesRoutes = require('./routes/rolesRoutes');
 const permissionsRoutes = require('./routes/permissionsRoutes');
 const commentsRoutes = require('./routes/commentRoutes');
-
-
 const setupSwagger = require('./config/swagger');
 
 dotenv.config();
